@@ -1,0 +1,9 @@
+{
+  "id": "threads-sync",
+  "name": "Threads",
+  "version": "0.1.0",
+  "minAppVersion": "1.11.4",
+  "description": "Sync your knowledge across devices using Google Drive.",
+  "author": "Himanshu",
+  "isDesktopOnly": true
+}
