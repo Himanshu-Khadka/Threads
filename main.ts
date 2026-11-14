@@ -1,11 +1,19 @@
 import { Notice, Plugin } from "obsidian";
 
-export default class ThreadsPlugin extends Plugin{
-    onload(){
-        new Notice("Thread is running!")
-    }
+export default class ThreadsPlugin extends Plugin {
+  onload() {
+    new Notice("Threads is running!");
 
-    onunload() {
-        console.log("Threads stopped.")
-    }
+    this.addCommand({
+      id: "sync-now",
+      name: "Sync now",
+      callback: () => {
+        new Notice("Threads: sync requested.");
+      }
+    });
+  }
+
+  onunload() {
+    console.log("Threads stopped.");
+  }
 }
