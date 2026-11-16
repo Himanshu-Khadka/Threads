@@ -1,12 +1,18 @@
-import * as esbuild from "esbuild";
+import * as esbuild from 'esbuild';
 
-await esbuild.build({
-    entryPoints: ["main.ts"],
-    bundle: true,
-    outfile: "main.js",
-    format: "cjs",
-    platform: "node",
-    target: "es2022",
-    external: ["obsidian"],
-    logLevel:"info"
+const context = await esbuild.context({
+  entryPoints: ['src/main.ts'],
+  bundle: true,
+  outfile: 'main.js',
+  platform: 'node',
+  format: 'cjs',
+  target: 'es2022',
+  external: ['obsidian', 'electron'],
+  sourcemap: false,
+  logLevel: 'info',
 });
+if (process.argv.includes('--watch')) await context.watch();
+else {
+  await context.rebuild();
+  await context.dispose();
+}

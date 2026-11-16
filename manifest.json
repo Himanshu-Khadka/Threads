@@ -1,9 +1,9 @@
 {
   "id": "threads-sync",
   "name": "Threads",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "1.11.4",
-  "description": "Sync your knowledge across devices using Google Drive.",
+  "description": "Connect Google Drive, verify transfers, and upload individual note copies. Automatic multi-device sync is not implemented.",
   "author": "Himanshu",
   "isDesktopOnly": true
 }
