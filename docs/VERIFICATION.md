@@ -1,4 +1,4 @@
-# Threads 0.4.0 verification
+# Threads 0.4.1 verification
 
 Date: 2026-11-17. Environment: Linux, Node.js 24.22.1.
 Google endpoints and the Obsidian host are simulated unless stated otherwise.
@@ -10,17 +10,21 @@ Google endpoints and the Obsidian host are simulated unless stated otherwise.
 | TypeScript strict checking | Passed, including unused-symbol checks |
 | Plugin tests | 116 passed across 9 files |
 | Broker tests | 7 passed using real loopback HTTP sockets and mocked Google |
-| Package/installer tests | 2 passed; exact ZIP assets, no accidental overwrite, data preservation, code backup |
+| Release workflow logic | 12 tests passed against a simulated GitHub API |
+| Package/installer tests | 3 passed; exact assets, reproducible ZIP, checksums, data preservation, code backup |
 | Compiled desktop host smoke | Lifecycle, controls, OAuth callback, copies, restart, migration, disconnect |
 | Compiled desktop two-device smoke | Folders, offline retry, conflicts, account isolation, foreground scheduling |
 | Compiled mobile sandbox smoke | Same sync cases plus hosted sign-in/pending poll; no Node/Electron/Buffer |
 | Release configuration | Missing config refused; dummy hosted config builds; server-only marker absent |
-| Release version check | Manifest, package/lockfile, compatibility map, and tag match |
+| Release version check | Version helper keeps four files aligned; reused tags/downgrades rejected |
 
 Broker tests cover state and claim proof rejection, PKCE exchange, concurrent
 claim retries, denial/expiry, request/session limits, provider failure sanitation,
 and server-only secret use. Plugin tests cover revision integrity, durable
 pending uploads, account binding, safe paths, token refresh, and cancellation.
+Release tests cover incomplete uploads staying as drafts, resuming matching
+assets, checksum mismatches, published-release no-ops, mismatched commits,
+pagination, annotated tags, and preventing token uploads to an unexpected host.
 
 The configured build was tested only with nonfunctional example configuration.
 The final local developer artifact is rebuilt without it. The three-OS GitHub
@@ -36,6 +40,8 @@ Windows/macOS runner or native Obsidian installation.
 - Real SecretStorage persistence, visual settings layout, editor buffer behavior.
 - Live Drive consistency, permission/quota errors, multi-device crash recovery.
 - BRAT installation of a configured release; no release is published by this refactor.
+- Actual GitHub draft/upload/publish execution with the repository's Actions token,
+  followed by a second higher-version release delivered through BRAT.
 - Obsidian community-directory review or Google production publication.
 
 ## Physical-device acceptance gate

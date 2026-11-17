@@ -98,7 +98,8 @@ npm run package:release
 ```
 
 The builder embeds the origin and public ID, never reads `GOOGLE_CLIENT_SECRET`,
-and rejects a release with no app configuration. Ordinary `npm run package`
+and `package:release` requires hosted configuration and consistent version metadata.
+Ordinary `npm run package`
 can build an unconfigured development artifact; build success does not mean
 Google sign-in is ready.
 
@@ -113,23 +114,33 @@ Complete [real-device acceptance](VERIFICATION.md), including live Google Web
 client exchange/refresh and the iPad browser return. Fixtures cannot prove
 provider configuration or operating-system behavior.
 
-The release workflow runs on a numeric tag such as `0.4.0`, without a `v`
-prefix, matching the manifest. Configure repository Actions **variables**
-`THREADS_AUTH_ORIGIN` and `THREADS_GOOGLE_WEB_CLIENT_ID`; no Web client secret
-belongs in that workflow. Review/merge the source, then tag the tested commit
-and push that tag. Tests run before a configured GitHub **prerelease** is created.
+Configure repository Actions **variables** `THREADS_AUTH_ORIGIN` and
+`THREADS_GOOGLE_WEB_CLIENT_ID`, then set `THREADS_RELEASES_ENABLED=true` after
+acceptance. No Web client secret belongs in the workflow. Prepare a new version
+with `npm run release:prepare -- patch` or `minor`, update CHANGELOG.md, test,
+and merge/push into `main`.
 
-Assets are `main.js`, `manifest.json`, `styles.css`, and
-`threads-sync-0.4.0.zip`. Keep package/lockfile, manifest, `versions.json`, and
-tag consistent. GitHub source archives are not installable plugin packages;
-CI artifacts are development builds, not configured public releases.
+The Publish update workflow tests Windows, macOS, and Linux before building a
+configured package. It stages a draft, checks all asset digests, and publishes
+a beta only after the complete upload is verified. Existing published versions
+are never overwritten; a normal push without a version bump skips publication.
+You no longer need to create the numeric release tag manually. Initial setup
+can also use workflow_dispatch on main. See [updates and recovery](UPDATES.md).
+
+Assets are `main.js`, `manifest.json`, `styles.css`,
+`threads-sync-<version>.zip`, and `SHA256SUMS`. The version-preparation command
+keeps package/lockfile, manifest, and compatibility history consistent. GitHub
+source archives are not installable plugin packages; CI artifacts are development
+builds, not configured public releases.
 
 BRAT can install the beta on mobile and desktop. Community-directory publication
 also requires Obsidian review and a repository license explicitly chosen by the
 owner; this refactor does not select a legal license for you.
 
-Pushing this code does not deploy the broker, publish the Google app, create a
-release tag, or submit to Obsidian automatically.
+Pushing this feature branch does not deploy the broker, publish the Google app,
+or submit to Obsidian. Releases start only after the workflow is on main and the
+publisher explicitly enables it. End users can then follow Latest in BRAT for
+updates instead of copying files each time.
 
 ## References
 
