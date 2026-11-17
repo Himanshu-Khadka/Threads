@@ -1,29 +1,37 @@
-# Install Threads 0.2.0 on Windows
+# Install Threads 0.3.0 on Windows
 
-This zip contains all source files and an already-built plugin. You do not
-need to assemble the earlier chat snippets or compile anything to try it.
+Use a disposable test vault first. This is a desktop Markdown sync preview,
+not a production backup service. Keep an independent copy of your notes.
 
 ## Upgrade your existing plugin
 
-1. Extract the zip and open its `threads` folder.
+1. Open the project in VS Code and run `npm ci`, then `npm run package`.
 2. In Obsidian, disable Threads under Settings > Community plugins.
 3. Open your test vault's `.obsidian/plugins/threads-sync` in File Explorer.
 4. Replace only `main.js` and `manifest.json` with those from this zip's
-   `threads/dist/threads-sync` folder. Also put its `styles.css` there.
+   `dist/threads-sync` folder. Also put its `styles.css` there.
 5. Leave the installed `data.json` untouched. Do not delete your vault, notes,
    existing Git repository, or source history.
-6. Enable Threads again. Settings > Threads should show version 0.2.0.
-7. Your tutorial Client ID and secret should be imported automatically. Click
-   Connect Google once to authorize this build. If credentials are absent,
-   enter them in settings and click Save credentials first.
-8. Click Check connection, then Run sample test.
-9. Open a disposable Markdown note and use Ctrl+P > Threads: Upload current
-   note copy. Find the new copy under your configured Drive folder, then your
-   vault name and the note's original subfolders.
+6. Enable Threads again and open Settings > Threads.
+7. Click Sign in with Google. An existing personal OAuth setup is retained.
+   An unconfigured development build needs personal credentials under Advanced;
+   public releases must be configured by the publisher using PUBLISHING.md.
+8. Read the sync scope and click Create cloud vault on the first device.
+   This opts in to uploading supported Markdown notes and downloading cloud notes.
+9. On another desktop, sign in to the same account with the same app build,
+   click Find existing vaults, select the matching vault, and click Start syncing.
+10. Edit a test note and wait for the status to report synced. New and changed
+    Markdown notes should transfer in both directions while both apps are open.
 
-The expected results are an account connection notice, a passing sample test
-with a new local sample note, and a verified Markdown copy on Drive.
-Automatic synchronization and iPad support are not included yet.
+Pause with the Automatic sync toggle. Sync now runs one manual pass.
+Conflicts keep your original note and put cloud versions in `_Threads conflicts`.
+Review those files, edit the original as needed, then use Ctrl+P > Threads:
+Resolve conflict using current note and confirm. Nothing is automatically deleted.
+
+Attachments, settings, deletions, and iPad are not supported in this preview.
+Renaming creates a new synced path but retains the old cloud note. Do not delete
+Drive history to clean it up; that will stop integrity checks. On Drive, revision
+filenames include IDs; normal note names are restored inside Obsidian.
 
 ## Optional Windows installer
 
@@ -60,11 +68,15 @@ explains the architecture, commands, security, and limitations.
 - Sign-in denied: check your test user, Desktop app OAuth client, and Drive API
   enablement in the same Google Cloud project.
 - Invalid grant: reconnect. External Testing grants can expire after seven days.
-- Folder missing: use the appropriate Reset folder action. Existing remote
-  files are not deleted. Note uploads find or create the matching Threads
-  folder; sample tests create a new test folder.
+- No cloud vaults: verify the same Google account AND the same OAuth app are
+  used on both devices. Files created by a different app may not be visible.
+- Missing history or integrity error: pause sync and restore affected Drive
+  revisions from Trash or a backup. Do not reset checkpoints to hide the error.
+- Another account: find/select a cloud vault belonging to the newly signed-in
+  account. The previous checkpoint is backed up locally, not reused across accounts.
 - Node import errors: use the included tsconfig.json with `types: ["node"]`,
   run npm ci, and ensure VS Code has this project folder open.
 
-Do not put real credentials in source, terminal commands, screenshots, chat,
-or Git commits. Enter them only in Threads settings.
+Do not put account tokens or private configuration in source, screenshots, chat,
+or Git commits. Publisher configuration belongs in the ignored local file
+described in PUBLISHING.md; personal configuration goes in Advanced settings.

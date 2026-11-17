@@ -1,17 +1,20 @@
 {
   "name": "threads-sync",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Threads desktop: Google authorization, verified transfers, and manual note copies.",
+  "description": "Threads desktop Markdown sync preview with Google sign-in, revision history, and conflict copies.",
   "scripts": {
     "dev": "node esbuild.config.mjs --watch",
     "build": "npm run typecheck && node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "smoke": "npm run build && node scripts/smoke.mjs",
-    "package": "npm run build && node scripts/package.mjs"
+    "smoke": "npm run build && node scripts/smoke.mjs && node scripts/sync-smoke.mjs",
+    "package": "npm run build && node scripts/package.mjs",
+    "package:release": "npm run typecheck && node esbuild.config.mjs --release && node scripts/package.mjs"
   },
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "devDependencies": {
     "@types/node": "22.15.30",
     "esbuild": "0.28.2",

@@ -14,12 +14,13 @@ let settingsTab;
 const activeNote = { basename: 'Original', path: 'School/Course/Original.md', extension: 'md', stat: { size: 12 } };
 const originalContent = '# Original\n';
 const app = {
-  workspace: { getActiveFile: () => activeNote },
+  workspace: { getActiveFile: () => activeNote, onLayoutReady: callback => callback() },
   secretStorage: {
     getSecret: key => secrets.get(key) ?? null,
     setSecret: (key, value) => secrets.set(key, value),
   },
   vault: {
+    on: () => ({}),
     getName: () => 'Smoke Vault',
     configDir: '.obsidian',
     read: async () => originalContent,
@@ -43,7 +44,8 @@ function control() {
 }
 class Plugin {
   commands = [];
-  constructor(app) { this.app = app; }
+  constructor(app) { this.app = app; this.manifest = { id: 'threads-sync' }; }
+  registerEvent() {}
   async loadData() { return persisted ? structuredClone(persisted) : null; }
   async saveData(data) { persisted = structuredClone(data); }
   addStatusBarItem() { return element(); }
@@ -88,7 +90,7 @@ async function requestUrl(req) {
 }
 const originalLoad = Module._load;
 Module._load = function(id, ...args) {
-  if (id === 'obsidian') return { Plugin, PluginSettingTab, Setting, Notice: class {}, requestUrl };
+  if (id === 'obsidian') return { Plugin, PluginSettingTab, Setting, Modal: class {}, TFile: class {}, TFolder: class {}, Notice: class {}, requestUrl };
   if (id === 'electron') return { shell: { openExternal: async raw => {
     const url = new URL(raw);
     const callback = new URL(url.searchParams.get('redirect_uri'));
@@ -101,9 +103,13 @@ try {
   const Threads = createRequire(import.meta.url)('../main.js').default;
   const plugin = new Threads(app);
   await plugin.onload();
+  if (process.env.THREADS_EXPECT_BUNDLED_CLIENT) assert.equal(plugin.credentials().clientId, 'test.apps.googleusercontent.com');
   assert.equal(calls.length, 0, 'No startup network requests');
-  assert.equal(plugin.commands.length, 4);
+  assert.equal(plugin.commands.length, 6);
   settingsTab.display();
+  assert(controls.some(c => c.text === 'Sign in with Google'));
+  assert(!controls.some(c => c.text === 'Save credentials'), 'Developer fields are hidden by default');
+  controls.find(c => c.text === 'Show').callback();
   assert(controls.some(c => c.text === 'Run sample test'));
   await plugin.saveCredentials('smoke.apps.googleusercontent.com', 'smoke-secret');
   await plugin.connect();
@@ -161,7 +167,8 @@ try {
   migrated.onunload();
   const afterClear = new Threads(app);
   await afterClear.onload();
-  assert.equal(afterClear.credentials().clientId, '', 'Cleared tutorial credentials must not reappear');
+  assert.notEqual(afterClear.credentials().clientId, 'tutorial.apps.googleusercontent.com', 'Cleared tutorial credentials must not reappear');
+  assert.equal(afterClear.credentials().refreshToken, undefined, 'Clear must not retain an account grant');
   afterClear.onunload();
   console.log('Compiled plugin smoke test passed: lifecycle, UI controls, login, round trips, manual upload, restart refresh, migration, clear, and unload.');
 } finally { Module._load = originalLoad; }

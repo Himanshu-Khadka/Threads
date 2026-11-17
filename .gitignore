@@ -11,3 +11,5 @@ install-backups/
 .obsidian/
 Thumbs.db
 .DS_Store
+google-client.local.json
+sync-state*.json

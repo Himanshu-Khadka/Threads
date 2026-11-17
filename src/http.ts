@@ -9,6 +9,10 @@ export interface HttpRequest {
 export interface HttpResponse { status: number; text: string }
 export type Transport = (request: HttpRequest) => Promise<HttpResponse>;
 
+export class GoogleHttpError extends ThreadsError {
+  constructor(public readonly status: number, message: string) { super(message); }
+}
+
 export function assertGoogleUrl(raw: string): void {
   const url = new URL(raw);
   if (url.protocol !== 'https:' || url.username || url.password || url.port ||
@@ -32,7 +36,7 @@ export class GoogleHttp {
       if (response.status === 400 && request.url === 'https://oauth2.googleapis.com/token') {
         throw new ThreadsError('Google rejected authorization. Check the Desktop OAuth credentials, or reconnect if the grant expired.');
       }
-      throw new ThreadsError(`Google request failed (HTTP ${response.status}). Try again later.`);
+      throw new GoogleHttpError(response.status, `Google request failed (HTTP ${response.status}). Try again later.`);
     }
     return response.text;
   }
