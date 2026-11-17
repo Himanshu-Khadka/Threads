@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { runRoundTrip } from '../src/roundtrip';
+import { runRoundTrip } from '../src/features/roundtrip';
 
 function fixture(folderId = '') {
   let uploaded = '';

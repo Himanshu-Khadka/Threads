@@ -1,14 +1,18 @@
 {
   "name": "threads-sync",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
-  "description": "Threads desktop Markdown sync preview with Google sign-in, revision history, and conflict copies.",
+  "description": "Cross-platform Obsidian Markdown sync preview with independent Google sign-in.",
   "scripts": {
     "dev": "node esbuild.config.mjs --watch",
     "build": "npm run typecheck && node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "smoke": "npm run build && node scripts/smoke.mjs && node scripts/sync-smoke.mjs",
+    "smoke": "npm run build && node scripts/smoke.mjs && node scripts/sync-smoke.mjs && node scripts/sync-smoke.mjs --mobile",
+    "test:broker": "node --test services/auth-broker/server.test.mjs",
+    "test:all": "npm test && npm run test:broker && npm run smoke && npm run test:package",
+    "test:package": "npm run package && node --test scripts/package.test.mjs",
+    "install:vault": "node scripts/install.mjs",
     "package": "npm run build && node scripts/package.mjs",
     "package:release": "npm run typecheck && node esbuild.config.mjs --release && node scripts/package.mjs"
   },
@@ -18,8 +22,12 @@
   "devDependencies": {
     "@types/node": "22.15.30",
     "esbuild": "0.28.2",
+    "fflate": "0.8.2",
     "obsidian": "1.14.4",
     "typescript": "5.9.3",
     "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.0.1"
   }
 }
