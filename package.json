@@ -1,27 +1,22 @@
 {
-  "name": "threads",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "threads-sync",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Threads desktop: Google authorization, verified transfers, and manual note copies.",
   "scripts": {
-    "build": "node esbuild.config.mjs"
+    "dev": "node esbuild.config.mjs --watch",
+    "build": "npm run typecheck && node esbuild.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "smoke": "npm run build && node scripts/smoke.mjs",
+    "package": "npm run build && node scripts/package.mjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Himanshu-Khadka/Threads.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Himanshu-Khadka/Threads/issues"
-  },
-  "homepage": "https://github.com/Himanshu-Khadka/Threads#readme",
+  "engines": { "node": ">=22.12.0" },
   "devDependencies": {
-    "@types/node": "^26.6.6",
-    "esbuild": "^0.28.2",
-    "obsidian": "^1.14.4",
-    "typescript": "^7.0.2"
+    "@types/node": "22.15.30",
+    "esbuild": "0.28.2",
+    "obsidian": "1.14.4",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
   }
 }
