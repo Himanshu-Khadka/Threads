@@ -1,9 +1,9 @@
 {
   "id": "threads-sync",
   "name": "Threads",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "minAppVersion": "1.11.4",
-  "description": "Connect Google Drive, verify transfers, and upload individual note copies. Automatic multi-device sync is not implemented.",
+  "description": "Desktop Markdown sync to your own Google Drive, with revision history and conflict copies. Preview release.",
   "author": "Himanshu",
   "isDesktopOnly": true
 }

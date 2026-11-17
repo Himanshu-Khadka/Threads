@@ -155,7 +155,7 @@ export class GoogleAuth {
         const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
         url.search = new URLSearchParams({
           client_id: clientId, redirect_uri: redirectUri, response_type: 'code',
-          scope: DRIVE_SCOPE, access_type: 'offline', prompt: 'consent',
+          scope: DRIVE_SCOPE, access_type: 'offline', prompt: 'consent select_account',
           state, code_challenge: pkceChallenge(verifier), code_challenge_method: 'S256',
         }).toString();
         void this.openBrowser(url.toString()).catch(() => finish(new ThreadsError('Could not open your default browser.')));

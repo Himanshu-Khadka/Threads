@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { ThreadsError } from './errors';
 import type { Credentials } from './oauth';
+import { parseSyncState, type SyncState } from './sync';
 
 export interface ThreadsSettings {
   schemaVersion: 1;
@@ -11,6 +12,8 @@ export interface ThreadsSettings {
   backupFolderId: string;
   lastUpload: string;
   tutorialImported: boolean;
+  autoSync: boolean;
+  sync: SyncState | null;
 }
 
 export function loadSettings(raw: unknown): ThreadsSettings {
@@ -29,6 +32,8 @@ export function loadSettings(raw: unknown): ThreadsSettings {
     backupFolderId: typeof data.backupFolderId === 'string' && /^[\w-]+$/.test(data.backupFolderId) ? data.backupFolderId : '',
     lastUpload: typeof data.lastUpload === 'string' ? data.lastUpload : '',
     tutorialImported: data.tutorialImported === true,
+    autoSync: data.autoSync === true,
+    sync: parseSyncState(data.sync),
   };
 }
 
