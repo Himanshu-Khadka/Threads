@@ -4,7 +4,7 @@ An Obsidian plugin that syncs Markdown notes through **your own Google Drive**.
 Obsidian remains the editor, backlink index, and knowledge graph. Threads handles
 authentication, cloud history, transfers, and conflict preservation.
 
-**0.4.0 is a cross-platform preview. Use disposable vaults and independent backups.**
+**0.4.1 is a cross-platform preview. Use disposable vaults and independent backups.**
 Mobile-compatible code is included, but the authentication service has not been
 deployed and physical-device acceptance is pending. A source checkout or CI
 artifact is not automatically a sign-in-ready public release.
@@ -25,6 +25,7 @@ shared filesystem mount is required.
 ## Get started
 
 - [Install and connect devices](docs/INSTALLATION.md)
+- [Install once and receive updates](docs/UPDATES.md)
 - [Configure sign-in and publish a beta](docs/PUBLISHING.md)
 - [Architecture and storage protocol](docs/ARCHITECTURE.md)
 - [Verification and real-device checklist](docs/VERIFICATION.md)
@@ -43,6 +44,11 @@ Use Node.js 24 (minimum 22.12). PowerShell users can use `npm.cmd` when script
 policy blocks `npm.ps1`. `npm run dev` watches and rebuilds root `main.js`;
 it does not install or reload the plugin. Package and install again after editing.
 Generated files and local credentials are ignored by Git.
+
+For a new release, run `npm run release:prepare -- patch` (or `minor`), update
+the changelog, test, and merge into `main`. After one-time publisher setup, CI
+stages and verifies a versioned GitHub release before making it available to
+BRAT users. Pushing ordinary commits does not overwrite a released package.
 
 ## What sync does
 

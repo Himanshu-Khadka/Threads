@@ -1,11 +1,57 @@
-name: Beta release
+name: Publish update
 on:
   push:
-    tags: ['[0-9]*.[0-9]*.[0-9]*']
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: threads-releases
+  cancel-in-progress: false
 jobs:
-  release:
+  prepare:
+    if: github.ref == 'refs/heads/main' && vars.THREADS_RELEASES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.plan.outputs.publish }}
+      version: ${{ steps.plan.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Check version, existing releases, and public configuration
+        id: plan
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
+          THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
+        run: node scripts/release.mjs plan
+  verify:
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:all
+  publish:
+    needs: [prepare, verify]
+    if: needs.prepare.outputs.publish == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,18 +64,14 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run test:all
-      - name: Validate release configuration and version
-        env:
-          THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
-          THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
-        run: node scripts/check-release.mjs
-      - name: Build hosted-auth release
+      - name: Build configured package
         env:
           THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
           THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
         run: npm run package:release
-      - name: Publish beta assets
+      - name: Stage, verify checksums, then publish beta
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css dist/*.zip --verify-tag --title "Threads $GITHUB_REF_NAME" --generate-notes --prerelease
+          GITHUB_TOKEN: ${{ github.token }}
+          THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
+          THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
+        run: node scripts/release.mjs publish

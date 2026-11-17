@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { unzipSync } from 'fflate';
+import { sha256 } from './github-release.mjs';
+import { releaseAssetNames } from './release-utils.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
@@ -17,6 +19,17 @@ test('archive contains only the three Obsidian runtime files', async () => {
   assert.deepEqual(Object.keys(zip).sort(), names.map(name => `${manifest.id}/${name}`).sort());
   for (const name of names) assert.deepEqual(Buffer.from(zip[`${manifest.id}/${name}`]), await readFile(path.join(root, name)));
   assert.equal(manifest.isDesktopOnly, false);
+});
+
+test('versioned package checksums match every asset and ZIP output is repeatable', async () => {
+  const release = path.join(root, 'dist', 'releases', manifest.version);
+  const bytes = new Map();
+  for (const name of releaseAssetNames(manifest)) bytes.set(name, await readFile(path.join(release, name)));
+  const sums = [...bytes].filter(([name]) => name !== 'SHA256SUMS').map(([name, body]) => `${sha256(body)}  ${name}\n`).join('');
+  assert.equal(bytes.get('SHA256SUMS').toString(), sums);
+  for (const name of names) assert.deepEqual(bytes.get(name), await readFile(path.join(root, name)));
+  execFileSync(process.execPath, [path.join(root, 'scripts/package.mjs')], { cwd: root, stdio: 'pipe' });
+  for (const [name, expected] of bytes) assert.deepEqual(await readFile(path.join(release, name)), expected);
 });
 
 test('installer rejects non-vaults and preserves data during explicit updates', async () => {

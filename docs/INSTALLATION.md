@@ -36,7 +36,7 @@ Previous runtime files are backed up under the repository's ignored
 `install-backups/` directory. Existing `data.json` is preserved. Restart
 Obsidian after a manifest change and enable Threads in Settings > Community plugins.
 
-For a prebuilt release, Node is unnecessary: extract `threads-sync-0.4.0.zip`
+For a prebuilt release, Node is unnecessary: extract `threads-sync-<version>.zip`
 into `<vault>/.obsidian/plugins/`. The three runtime files must sit directly
 under `<vault>/.obsidian/plugins/threads-sync/`, without an extra nested folder.
 Command+Shift+Period reveals hidden folders on macOS. Custom configuration-folder
@@ -53,8 +53,8 @@ Pushing source alone does not produce release assets.
 
 1. Create a local test vault in Obsidian on the device.
 2. Install and enable **BRAT** from Obsidian's Community plugins directory.
-3. In BRAT, add a beta plugin from `Himanshu-Khadka/Threads`, selecting the
-   published `0.4.0` release or the later configured version being tested.
+3. In BRAT, add a beta plugin from `Himanshu-Khadka/Threads`, selecting Latest
+   to follow new releases instead of freezing one version.
 4. Enable Threads and open its settings.
 5. Sign in with Google in the system browser, then return to Obsidian. The
    callback page's Open Obsidian link is optional; manually returning also works.
@@ -65,6 +65,8 @@ iPad Files app. It is a separate third-party plugin; install it only if you
 trust it. Threads is not submitted to the community directory, so searching
 there for Threads is not an installation path yet.
 See [BRAT's guide](https://github.com/TfTHacker/obsidian42-brat/blob/main/BRAT-DEVELOPER-GUIDE.md).
+Enable BRAT's automatic update check in its settings to receive future releases.
+See [updates and recovery](UPDATES.md); do not uninstall Threads to update it.
 
 ## Connect the same knowledge vault
 

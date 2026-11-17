@@ -18,3 +18,10 @@ Report security issues privately as described in SECURITY.md.
 CI checks Linux, Windows, and macOS. Mobile sandbox tests do not replace
 physical iPad/iPhone/Android acceptance tests. Record actual devices and results
 in docs/VERIFICATION.md before claiming device support.
+
+Prepare versions with `npm run release:prepare -- patch|minor|major|x.y.z` rather
+than editing only package.json. Keep the plugin ID stable, preserve compatibility
+history, and update CHANGELOG.md. The publication workflow tests all three OSes
+and verifies staged assets before releasing. See docs/UPDATES.md for one-time
+setup, beta auto-updates, and failed-draft recovery. Never force-update a release
+tag or overwrite published assets; ship a new patch version instead.

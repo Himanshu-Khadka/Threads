@@ -22,3 +22,10 @@ Do not disable scanning globally for a false-positive finding. Review and
 document the exact finding. Rotate genuine exposed credentials before attempting
 history cleanup. The old `url.password` property-read finding is not a stored
 password and does not justify removing URL validation.
+
+Updates use GitHub release assets through Obsidian/BRAT, not an embedded custom
+self-updater. The publisher stages a draft and checks GitHub asset digests before
+publication. Digests detect corruption, not malicious changes by an authorized
+maintainer. Protect GitHub access and main-branch review. Do not edit a draft
+while its workflow is running or replace an already published version. Keep
+beta auto-updates opt-in and retain independent vault backups.
