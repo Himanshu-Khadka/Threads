@@ -1,0 +1,24 @@
+services:
+  broker:
+    build: .
+    restart: unless-stopped
+    environment:
+      AUTH_ORIGIN: https://${AUTH_DOMAIN:?Set AUTH_DOMAIN}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?Set GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?Set GOOGLE_CLIENT_SECRET}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      AUTH_DOMAIN: ${AUTH_DOMAIN:?Set AUTH_DOMAIN}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+volumes:
+  caddy_data:
+  caddy_config:

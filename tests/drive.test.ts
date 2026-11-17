@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { DriveClient, multipart } from '../src/drive';
-import { GoogleHttp, type HttpRequest } from '../src/http';
+import { DriveClient, multipart } from '../src/drive/client';
+import { GoogleHttp, type HttpRequest } from '../src/drive/http';
 
 describe('Drive client', () => {
   it('builds multipart with metadata and exact Unicode content', () => {

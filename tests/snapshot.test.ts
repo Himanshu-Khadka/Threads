@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MAX_NOTE_BYTES, uploadNoteCopy } from '../src/snapshot';
+import { MAX_NOTE_BYTES, uploadNoteCopy } from '../src/features/snapshot';
 
 function fixture(folderId = '') {
   let content = '';

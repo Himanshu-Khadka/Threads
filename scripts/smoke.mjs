@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import Module from 'node:module';
+globalThis.document = { visibilityState: 'visible' };
 
 // Exercise the compiled bundle against a tiny host double, never a real account.
 const notes = new Map();
@@ -46,6 +47,8 @@ class Plugin {
   commands = [];
   constructor(app) { this.app = app; this.manifest = { id: 'threads-sync' }; }
   registerEvent() {}
+  registerDomEvent() {}
+  registerObsidianProtocolHandler() {}
   async loadData() { return persisted ? structuredClone(persisted) : null; }
   async saveData(data) { persisted = structuredClone(data); }
   addStatusBarItem() { return element(); }
@@ -90,7 +93,7 @@ async function requestUrl(req) {
 }
 const originalLoad = Module._load;
 Module._load = function(id, ...args) {
-  if (id === 'obsidian') return { Plugin, PluginSettingTab, Setting, Modal: class {}, TFile: class {}, TFolder: class {}, Notice: class {}, requestUrl };
+  if (id === 'obsidian') return { Platform: { isDesktopApp: true }, Plugin, PluginSettingTab, Setting, Modal: class {}, TFile: class {}, TFolder: class {}, Notice: class {}, requestUrl };
   if (id === 'electron') return { shell: { openExternal: async raw => {
     const url = new URL(raw);
     const callback = new URL(url.searchParams.get('redirect_uri'));

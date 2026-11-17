@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { GoogleAuth, DRIVE_SCOPE, pkceChallenge, type Credentials } from '../src/oauth';
-import { GoogleHttp, type HttpRequest } from '../src/http';
+import { GoogleAuth, DRIVE_SCOPE, pkceChallenge, type Credentials } from '../src/auth/google-auth';
+import { GoogleHttp, type HttpRequest } from '../src/drive/http';
 
 const active: GoogleAuth[] = [];
 afterEach(() => { for (const auth of active.splice(0)) auth.reset(); vi.useRealTimers(); });
@@ -100,6 +100,7 @@ describe('desktop authorization', () => {
       .toEqual(['access', 'access', 'access']);
     expect(await f.auth.accessToken()).toBe('access');
     expect(f.transport).toHaveBeenCalledTimes(1);
+    expect(f.get().refreshToken).toBe('new-refresh');
   });
 
   it('refreshes again near expiry', async () => {
@@ -122,5 +123,14 @@ describe('desktop authorization', () => {
   it('rejects malformed tokens', async () => {
     const f = fixture(); f.tokenResponse.expires_in = '3600';
     await expect(f.auth.accessToken()).rejects.toThrow('invalid access token');
+  });
+
+  it('refuses desktop sign-in and refresh on mobile before opening any socket', async () => {
+    const http = vi.fn(); const open = vi.fn();
+    const auth = new GoogleAuth(new GoogleHttp(http), () => ({ clientId: 'test', clientSecret: 'test', refreshToken: 'test' }), vi.fn(), open, 100, false);
+    active.push(auth);
+    await expect(auth.connect()).rejects.toThrow('requires a hosted-auth release');
+    await expect(auth.accessToken()).rejects.toThrow('cannot be refreshed on mobile');
+    expect(http).not.toHaveBeenCalled(); expect(open).not.toHaveBeenCalled();
   });
 });

@@ -1,0 +1,35 @@
+name: Beta release
+on:
+  push:
+    tags: ['[0-9]*.[0-9]*.[0-9]*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:all
+      - name: Validate release configuration and version
+        env:
+          THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
+          THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
+        run: node scripts/check-release.mjs
+      - name: Build hosted-auth release
+        env:
+          THREADS_AUTH_ORIGIN: ${{ vars.THREADS_AUTH_ORIGIN }}
+          THREADS_GOOGLE_WEB_CLIENT_ID: ${{ vars.THREADS_GOOGLE_WEB_CLIENT_ID }}
+        run: npm run package:release
+      - name: Publish beta assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css dist/*.zip --verify-tag --title "Threads $GITHUB_REF_NAME" --generate-notes --prerelease

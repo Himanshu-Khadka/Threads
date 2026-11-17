@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadSettings, parseCredentials, tutorialCredentials } from '../src/settings';
+import { loadSettings, parseCredentials, tutorialCredentials } from '../src/settings/model';
 
 describe('device settings and secrets', () => {
   it('creates distinct secret references for new installations', () => {

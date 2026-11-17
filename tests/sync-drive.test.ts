@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { DriveClient } from '../src/drive';
-import { GoogleHttp, type HttpRequest } from '../src/http';
-import { SyncDrive } from '../src/sync-drive';
-import { digest, type Revision } from '../src/sync';
+import { DriveClient } from '../src/drive/client';
+import { GoogleHttp, type HttpRequest } from '../src/drive/http';
+import { SyncDrive } from '../src/drive/sync-drive';
+import { digest, type Revision } from '../src/sync/engine';
 
 const revision: Revision = { version: 1, id: 'reserved-id', path: 'School/Note.md', hash: digest('hello'), parents: [] };
 const file = { id: revision.id, mimeType: 'text/markdown', description: JSON.stringify(revision), size: '5' };

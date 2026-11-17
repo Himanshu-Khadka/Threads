@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { digest, parseRevision, parseSyncState, revisionHeads, SyncEngine, validNotePath, type Revision, type SyncState } from '../src/sync';
+import { digest, parseRevision, parseSyncState, revisionHeads, SyncEngine, validNotePath, type Revision, type SyncState } from '../src/sync/engine';
 
 const state = (): SyncState => ({ version: 1, vaultId: 'vault', vaultName: 'Vault', accountId: 'account', clientId: 'client', baselines: [] });
 function cloud() {

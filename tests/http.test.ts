@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { assertGoogleUrl, GoogleHttp } from '../src/http';
-import { safeMessage } from '../src/errors';
+import { assertGoogleUrl, GoogleHttp } from '../src/drive/http';
+import { safeMessage } from '../src/shared/errors';
 
 describe('Google transport boundary', () => {
   it.each([
